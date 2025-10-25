@@ -23,6 +23,19 @@ This is a Node.js tool for extracting golf round data from the Golfshot website 
 # - Does NOT generate CSV files (JSON is the primary format)
 ```
 
+### Score Analysis
+```bash
+# Analyze scores and generate visualization
+node analyze-scores.js                               # Calculate normalized scores and generate graph data
+
+# This script:
+# - Reads golf-data/rounds-data.json
+# - Counts actual holes played for each round (9, 13, 14, or 18)
+# - Normalizes all scores to 18-hole equivalent (score × 18 ÷ holes_played)
+# - Generates golf-data/score-graph-data.json for visualization
+# - Displays score comparison table and statistics
+```
+
 ### Development
 ```bash
 npm install                                          # Install dependencies
@@ -46,15 +59,26 @@ The data extraction uses Chrome DevTools Protocol for browser automation:
 
 ### Key Scripts
 
+**Data Extraction:**
 - **`.claude/commands/extract-golf-rounds.md`** - Claude command definition that orchestrates browser automation via Chrome DevTools MCP server. This is the primary method for extracting rounds.
-
-- **`extract-by-date-range.js`** - Legacy processing module for CSV generation. No longer used by default since JSON is the preferred format.
-
-- **`simple-extract.js`** - Legacy CSV generator. Can be used if CSV output is needed.
 
 - **`browser-extract.js`** - Standalone browser console script that can be pasted directly into DevTools. Alternative extraction method if Chrome DevTools MCP is not available.
 
 - **`extract-specific-rounds.js`** - Browser console script for extracting a specific list of round URLs.
+
+- **`append-october-rounds.js`** - Helper script used to append October 2025 rounds to the dataset.
+
+**Score Analysis & Visualization:**
+- **`analyze-scores.js`** - Main analysis script that calculates normalized scores (accounting for 9, 13, 14, or 18 hole rounds) and generates score-graph-data.json for visualization.
+
+- **`golf-scores-graph.html`** - Interactive Chart.js visualization comparing Lest vs Gary scores over time with normalization details.
+
+- **`index.html`** - GitHub Pages version of the visualization (deployed at https://lesterthomas.github.io/golfshot/).
+
+**Legacy Scripts:**
+- **`extract-by-date-range.js`** - Legacy processing module for CSV generation. No longer used by default since JSON is the preferred format.
+
+- **`simple-extract.js`** - Legacy CSV generator. Can be used if CSV output is needed.
 
 ### Data Flow
 
@@ -125,6 +149,8 @@ Date format is **"MMM DD, YYYY"** (e.g., "Oct 24, 2025"). The `parseGolfDate()` 
 
 All data is stored in `golf-data/`:
 - `rounds-data.json` - **Primary data file** containing all extracted rounds (incrementally appended)
+- `score-graph-data.json` - Processed scoring data with normalization for visualization
+- `golf-scores-chart.png` - Screenshot of the interactive visualization
 
 ## Chrome DevTools Integration
 
@@ -138,3 +164,35 @@ The `/extract-golf-rounds` command uses the Chrome DevTools MCP server to:
 - Preserve all existing data (no overwrites)
 
 **Authentication**: The automation requires an active logged-in session to Golfshot. You will be prompted to authenticate manually when the browser opens.
+
+## Score Normalization
+
+Since rounds can have different hole counts (9, 13, 14, or 18 holes), the analysis script normalizes all scores to an 18-hole equivalent for fair comparison:
+
+**Normalization Formula:** `Normalized Score = Raw Score × (18 ÷ Holes Played)`
+
+**Examples:**
+- 9-hole round: score of 50 → 50 × 18/9 = 100
+- 14-hole round: score of 73 → 73 × 18/14 = 94
+- 13-hole round: score of 77 → 77 × 18/13 = 107
+- 18-hole round: score of 105 → no change (105)
+
+The visualization uses different point shapes to indicate hole counts:
+- ● Circle = 18 holes
+- ■ Square = 14 holes
+- ▲ Triangle = 9 holes
+- ◆ Diamond = 13 holes
+
+## Visualization
+
+The interactive golf scores chart is available at:
+- **Live demo:** https://lesterthomas.github.io/golfshot/
+- **Local file:** `golf-scores-graph.html`
+- **Screenshot:** `golf-scores-chart.png`
+
+Features:
+- Line chart comparing Lest vs Gary scores over time
+- All scores normalized to 18-hole equivalent
+- Interactive tooltips showing raw scores and normalization calculations
+- Statistics summary: wins, losses, and ties
+- Visual indicators for different hole counts
