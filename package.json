@@ -1,0 +1,12 @@
+{
+  "name": "golfshot-data-extractor",
+  "version": "1.0.0",
+  "description": "Extract golf round data from Golfshot website",
+  "main": "extract-rounds.js",
+  "scripts": {
+    "extract": "node extract-rounds.js"
+  },
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  }
+}

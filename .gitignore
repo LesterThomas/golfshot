@@ -1,0 +1,6 @@
+node_modules/
+*.csv
+temp-round-urls.json
+round-urls-sample.json
+golf-data/rounds-data-temp.json
+.cache/
