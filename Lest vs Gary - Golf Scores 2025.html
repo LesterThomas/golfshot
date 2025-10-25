@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)file:///D:/Dev/lesterthomas/golfshot/golf-scores-graph.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lest vs Gary - Golf Scores 2025</title>
+    <script src="./Lest vs Gary - Golf Scores 2025_files/chart.js.download"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        .chart-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .stat-value.lest {
+            color: rgb(75, 192, 192);
+        }
+        .stat-value.gary {
+            color: rgb(255, 99, 132);
+        }
+        .stat-value.tie {
+            color: #666;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lest vs Gary - Golf Scores 2025</h1>
+    <div class="subtitle">All rounds normalized to 18 holes (score × 18 ÷ holes_played)</div>
+
+    <div class="chart-container">
+        <canvas id="scoreChart" width="1156" height="579" style="display: block; box-sizing: border-box; height: 482.5px; width: 964px;"></canvas>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <div class="stat-value lest" id="lestWins">13</div>
+            <div class="stat-label">Lest Wins</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value gary" id="garyWins">9</div>
+            <div class="stat-label">Gary Wins</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value tie" id="ties">1</div>
+            <div class="stat-label">Ties</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-value" id="totalRounds" style="color: #2196F3;">23</div>
+            <div class="stat-label">Total Rounds</div>
+        </div>
+    </div>
+
+    <script>
+        // Embedded data with accurate hole counts and normalization
+        const data = {
+            "dates": ["Jan 04, 2025","Jan 19, 2025","Feb 16, 2025","Apr 13, 2025","Apr 21, 2025","Apr 27, 2025","Apr 30, 2025","May 11, 2025","May 18, 2025","Jul 20, 2025","Jul 28, 2025","Jul 30, 2025","Aug 07, 2025","Aug 10, 2025","Aug 17, 2025","Sep 07, 2025","Sep 21, 2025","Oct 03, 2025","Oct 05, 2025","Oct 12, 2025","Oct 15, 2025","Oct 17, 2025","Oct 24, 2025"],
+            "lestScores": [116,106,112,98,94,110,104,111,109,100,99,99,100,103,104,95,107,105,114,102,98,108,105],
+            "garyScores": [114,104,110,104,116,98,116,123,117,104,101,119,110,111,109,103,116,102,100,95,98,95,98],
+            "lestRawScores": [58,53,56,49,73,55,52,86,85,50,99,99,50,103,81,95,77,105,57,102,49,108,105],
+            "garyRawScores": [57,52,55,52,90,49,58,96,91,52,101,119,55,111,85,103,84,102,50,95,49,95,98],
+            "lestHolesPlayed": [9,9,9,9,14,9,9,14,14,9,18,18,9,18,14,18,13,18,9,18,9,18,18],
+            "garyHolesPlayed": [9,9,9,9,14,9,9,14,14,9,18,18,9,18,14,18,13,18,9,18,9,18,18]
+        };
+
+        // Create the chart
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+
+        // Create point styles based on hole count
+        const getPointStyle = (holes) => {
+            if (holes === 18) return 'circle';
+            if (holes === 14) return 'rect';
+            if (holes === 13) return 'rectRot';
+            return 'triangle';
+        };
+
+        const lestPointStyles = data.lestHolesPlayed.map(getPointStyle);
+        const garyPointStyles = data.garyHolesPlayed.map(getPointStyle);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.dates,
+                datasets: [
+                    {
+                        label: 'Lest',
+                        data: data.lestScores,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        borderWidth: 2,
+                        pointStyle: lestPointStyles
+                    },
+                    {
+                        label: 'Gary',
+                        data: data.garyScores,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        borderWidth: 2,
+                        pointStyle: garyPointStyles
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Golf Scores Over Time (Lower is Better)',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    subtitle: {
+                        display: true,
+                        text: 'Shapes: ● = 18 holes, ■ = 14 holes, ▲ = 9 holes, ◆ = 13 holes',
+                        font: {
+                            size: 12,
+                            style: 'italic'
+                        },
+                        padding: {
+                            bottom: 10
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            title: function(context) {
+                                const idx = context[0].dataIndex;
+                                const holes = data.lestHolesPlayed[idx];
+                                return context[0].label + ' (' + holes + ' holes)';
+                            },
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const label = context.dataset.label || '';
+                                const normScore = context.parsed.y;
+
+                                if (context.datasetIndex === 0) {
+                                    const rawScore = data.lestRawScores[idx];
+                                    const holes = data.lestHolesPlayed[idx];
+                                    if (holes === 18) {
+                                        return label + ': ' + rawScore;
+                                    }
+                                    return label + ': ' + rawScore + ' ×18÷' + holes + ' = ' + normScore;
+                                } else {
+                                    const rawScore = data.garyRawScores[idx];
+                                    const holes = data.garyHolesPlayed[idx];
+                                    if (holes === 18) {
+                                        return label + ': ' + rawScore;
+                                    }
+                                    return label + ': ' + rawScore + ' ×18÷' + holes + ' = ' + normScore;
+                                }
+                            },
+                            afterLabel: function(context) {
+                                const lestScore = data.lestScores[context.dataIndex];
+                                const garyScore = data.garyScores[context.dataIndex];
+                                if (context.datasetIndex === 0) {
+                                    const diff = lestScore - garyScore;
+                                    if (diff < 0) return `✓ Won by ${Math.abs(diff)} strokes`;
+                                    if (diff > 0) return `✗ Lost by ${diff} strokes`;
+                                    return '= Tied';
+                                } else {
+                                    const diff = garyScore - lestScore;
+                                    if (diff < 0) return `✓ Won by ${Math.abs(diff)} strokes`;
+                                    if (diff > 0) return `✗ Lost by ${diff} strokes`;
+                                    return '= Tied';
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        reverse: false,
+                        title: {
+                            display: true,
+                            text: 'Score (normalized to 18 holes)',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    </script>
+
+
+</body></html>
